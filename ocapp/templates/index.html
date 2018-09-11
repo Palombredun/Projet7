@@ -42,18 +42,27 @@
 				<h1 class="text-center title" style="font-size:6vw;"> <span id="GrandPy">GrandPy</span> Bot</h1>
 			</div>
 		</div>
+		
 		<div class="row">
 			<div class="col-lg-10 form">
 				<form method="post">
-   					<p><input type="text" name="question" class="form-control" placeholder="Posez votre question"/ required=""> </p>
+   					<p><input type="text" action="" name="question" class="form-control" placeholder="Posez votre question"/ required=""> </p>
 				</form>
-			</div>
+			</div>			
 			<div class="col-lg-2 bouton">
-				<button type="button" class="btn btn-primary btn-block" id="maj">Entrée</button>
+				<button type="button" class="btn btn-primary btn-block" id="click">Entrée</button>
 			</div>
-			<div class="col-lg-6" id="premier">
-				
+		</div>
+		
+		<div class="row">
+			<div class="col-lg-12" id="text_grandpy" >
+				<!--
+				<img src="../static/logo.png" alt="animation" class="rounded mx-auto d-block responsive" id="animation">
+				-->
 			</div>
+		</div>
+		
+		<div class="row col-lg-12" id="gmap">
 		</div>
 	</div> <!-- Fin class container -->
 	<div class="container-fluid">
@@ -64,13 +73,24 @@
 		</div>
 	</div>
 
-<script src="../../bootstrap/dist/js/bootstrap.js"></script>	
-<script src="../../bootstrap/dist/js/jquery.js"></script>
+<script
+	src="https://code.jquery.com/jquery-3.3.1.min.js"
+	integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+	crossorigin="anonymous">
+</script>
 <script>
+  function answer(text_grandpy, gmap, lat, lng, textGrandPy, wiki) {
+
+  }
+
   $(function() {
-    $('#maj').click(function() {
-      $('#premier').load('maj1.html', function() {  
-      });
+    $('#click').click(function() {
+    	$('#text_grandpy').hide();
+    	$('#gmap').hide()
+    	$('#animation').fadeIn(1500, 'swing').fadeOut(1500, 'swing').fadeIn(1500, 'swing').fadeOut(1500, 'linear');
+    	setTimeout (function() {
+    		$('#text_grandpy').show().load('maj1.html');
+    	}, 6000);
     });
   });
 </script>

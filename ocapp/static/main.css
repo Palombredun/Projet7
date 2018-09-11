@@ -50,6 +50,11 @@ a
 }
 
 
+#animation
+{
+	display: none;
+}
+
 /* Customization of the button */
 
 .btn {
