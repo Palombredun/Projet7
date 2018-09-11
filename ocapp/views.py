@@ -4,7 +4,7 @@ from flask import Flask, request, render_template, jsonify
 from jinja2 import Template
 
 from ocapp.controllers import *
-#from ocapp.form import QuestionForm
+
 
 app = Flask(__name__)
 
@@ -14,8 +14,8 @@ app.config.from_object('config')
 API_KEY = app.config['API_KEY']
 
 
-@app.route('/', methods=['get', 'post'])
-@app.route('/index/', methods=['get', 'post'])
+@app.route('/')
+@app.route('/index/')
 def index():
 	if request.method == 'GET':
 		return render_template('index.html')
@@ -47,23 +47,11 @@ def index():
 			return jsonify({'lat': gmap.lat, 'lng': gmap.lng, 'textGrandPy': "Désolé, je ne me souviens de rien à propos de cette endroit.", 'linkWiki': link})
 		else:
 			textGrandPy = parser.parseWiki(text)
+		
+		with open('toto.txt', 'w') as f:
+			f.write(textGrandPy)
 		return jsonify({'lat': gmap.lat, 'lng': gmap.lng, 'textGrandPy': textGrandPy, 'linkWiki': link})
 
-
-
-
-
-
-
-#@app.route('/', methods=['GET', 'POST'])
-#@app.route('/index/', methods=['GET', 'POST'])
-#def index():
-#	form = QuestionForm()
-#	if form.validate_on_submit():
-#		flash('A question is required')
-#		return render_template('index.html')
-#
-#	return render_template('index.html', form=form)
 
 
 if __name__ == "__main__":

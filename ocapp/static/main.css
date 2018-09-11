@@ -55,6 +55,11 @@ a
 	display: none;
 }
 
+#text_grandpy
+{
+	display: none;
+}
+
 /* Customization of the button */
 
 .btn {
