@@ -187,7 +187,7 @@ class MediaWikiAPI:
 		
 
 if __name__ == "__main__":
-	question = "Salut GrandPy, tu connais l'adresse d'Openclassrooms ?"
+	question = input('Entrez votre question : ')
 	
 	parser = Parser()	
 	search = parser.parseQuestion(question)

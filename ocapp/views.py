@@ -14,8 +14,8 @@ app.config.from_object('config')
 API_KEY = app.config['API_KEY']
 
 
-@app.route('/')
-@app.route('/index/')
+@app.route('/', methods=['get', 'post'])
+@app.route('/index/', methods=['get', 'post'])
 def index():
 	if request.method == 'GET':
 		return render_template('index.html')
@@ -30,17 +30,14 @@ def index():
 		if gmap.requestGMAP(search, count):
 			count += 1
 			search = parser.secondParsing()
-			gmap.requestGMAP(search, count)
 	
-		if gmap.requestGMAP(search, count):
-			#return jsonify({'error': "Désolé mon petit je n'ai rien trouvé, es-tû sûr de l'orthographe ?"})
-			return jsonify({'lat': -1, 'lng': -1, 'textGrandPy': "Désolé mon petit je n'ai rien trouvé, es-tû sûr de l'orthographe ?", 'linkWiki': link})
-	
+			if gmap.requestGMAP(search, count):
+				#return jsonify({'error': "Désolé mon petit je n'ai rien trouvé, es-tû sûr de l'orthographe ?"})
+				return jsonify({'lat': -1, 'lng': -1, 'textGrandPy': "Désolé mon petit je n'ai rien trouvé, es-tû sûr de l'orthographe ?", 'linkWiki': link})
+		
 		searchWiki = parser.parseAdress(gmap.location)
 		wiki = MediaWikiAPI()
 		text, link = wiki.requestMediaWiki(searchWiki)
-		with open('toto.txt', 'w') as f:
-			f.write(text[24])
 	
 		if text == -1 and link == -1:
 			#return jsonify({'error': "Désolé, je ne me souviens de rien à propos de cette endroit."})
