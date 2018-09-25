@@ -11,7 +11,7 @@ app = Flask(__name__)
 # Config options - Make sure you created a 'config.py' file.
 app.config.from_object('config')
 # To get one variable, tape app.config['MY_VARIABLE']
-API_KEY = app.config['API_KEY']
+#API_KEY = app.config['API_KEY']
 
 
 @app.route('/', methods=['get', 'post'])
@@ -25,6 +25,7 @@ def index():
 		parser = Parser()	
 		search = parser.parseQuestion(question)
 		gmap = GoogleMapAPI()
+		gmap.API_KEY = app.config['API_KEY']
 		count = 1	
 	
 		if gmap.requestGMAP(search, count):

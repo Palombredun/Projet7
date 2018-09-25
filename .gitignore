@@ -1,4 +1,4 @@
 env/
 config.py
-__pycache__/
-ocapp/tests/__pycache__/
+ocapp/__pycache__/
+tests/__pycache__/

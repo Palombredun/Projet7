@@ -1,6 +1,5 @@
 #!/bin/env python3
 import requests
-import json
 import re
 
 
@@ -59,46 +58,12 @@ class Parser:
 		the part that interests us. The function extracts the whole text, clean it and then keep
 		only the first two phrases.
 		"""
-		counter = 0
-		expression = r"^(==){1}[ ]{1}"
-		print("r = ",len(rawResponse))
-		for elt in rawResponse:
-			if re.match(expression, elt) is not None:
-				break
-			else:
-				counter += 1
-		del rawResponse[:counter]
-		text = rawResponse[1]
-		# Extracts the first two sentences:
-		foo = text.split('.')
-		foo = foo[:2]
-		chain = '.'.join(foo)
-
-		# remove what used to be links and '[', '{' characters:
-		foo = chain.split(' ')
-		i = 0
-		for i in range(len(foo)):
-			if '|' in foo[i] and '{' not in foo[i]:
-				tmp = foo[i].find('|')
-				foo[i] = foo[i][tmp:]
-		i = 0
-		for i in range(len(foo)):
-			if '|{{' in foo[i]:
-				tmp = foo[i].find('|{{')
-				foo[i] = foo[i][:tmp]
-
-		text = ' '.join(foo)
-		text = text.replace('[', '')
-		text = text.replace(']', '')
-		text = text.replace('|', '')
-		text += '.'
-		return text
-
-	def parseAdress(self, formattedAdress):
-		expression = r'^[0-9]*[ ]?'
-		adress = re.sub(expression, "", formattedAdress)
-		i = adress.find(',')
-		return adress[:i]
+		cleanr = re.compile('<.*?>')
+		cleanText = re.sub(cleanr, '', rawResponse)
+		cleanText = cleanText.strip().split('\n')[0]
+		cleanText = cleanText.split('.')
+		cleanText = '.'.join(cleanText[:3])
+		return cleanText
 
 
 class GoogleMapAPI:
@@ -108,11 +73,8 @@ class GoogleMapAPI:
 	link with it. 
 	"""
 	def __init__(self):
-		self.base = "https://maps.googleapis.com/maps/api/geocode/json?address="
-		self.place = ''
-		self.API_KEY = "AIzaSyDuT6k-2LrFv3c0dwPCL83bKwtM0fVM0Jg"
+		self.API_KEY = ""
 		self.link = ''
-		self.location = ''
 		self.lat = -1
 		self.lng = -1
 
@@ -125,13 +87,15 @@ class GoogleMapAPI:
 		from the request. The first one will be used, after a bit of parsing for the request to 
 		MediaWiki's API and the last three ones for the integration of the map into the website.
 		"""
+		self.API_KEY = "AIzaSyDuT6k-2LrFv3c0dwPCL83bKwtM0fVM0Jg"
 		if count == 1:
-			self.place = search
-			self.link = self.base + self.place.replace(' ', '+') + "&region=fr&key=" + self.API_KEY
+			self.link = "https://maps.googleapis.com/maps/api/geocode/json?" + \
+				"address={place}&region=fr&key=" + \
+			 	self.API_KEY
+			self.link =  self.link.format(place = search.replace(' ', '+'))
 			req = requests.get(self.link)
 			res = req.json()
 			if res['status'] == 'OK':
-				self.location = res['results'][0]['formatted_address']
 				self.lat = res['results'][0]['geometry']['location']['lat']
 				self.lng = res['results'][0]['geometry']['location']['lng']
 				return 0
@@ -139,8 +103,9 @@ class GoogleMapAPI:
 				return 1
 			
 		elif count == 2:
-			self.place = search
-			self.link = self.base + self.place.replace(' ', '+') + "&region=fr&key=" + self.API_KEY
+			self.link = "https://maps.googleapis.com/maps/api/geocode/json?address={place}&region=fr&key="\
+			 + self.API_KEY
+			self.link =  self.link.format(place = search.replace(' ', '+'))
 			req = requests.get(self.link)
 			res = req.json()
 			if res['status'] == 'OK':
@@ -159,62 +124,68 @@ class MediaWikiAPI:
 	sentence.
 	"""
 	def __init__(self):
-		self.search = ''
-		self.base = "https://fr.wikipedia.org/w/api.php?action=query&titles="
-		self.params = "&prop=revisions&rvprop=content&format=json&formatversion=2"
-		self.link = ''
-		self.text = ''
+		self.idPage = -1
+		self.textBot = ''
 		self.linkWikipedia = ''
 
-	def requestMediaWiki(self, search):
+	def getWikiPage(self, latitude, longitude):
+		link = "https://fr.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord={lat}%7C{lng}&format=json".format(lat = latitude, lng = longitude)
+		req = requests.get(link)
+		res = req.json()
+
+		if 'error' in res.keys():
+			return 1
+		self.idPage = res['query']['geosearch'][0]['pageid']
+		return 0
+
+	def requestMediaWiki(self):
 		"""
 		Create a link, make the request, extract a few sentences from the article and print it.
 		"""
-		self.search = search.replace(' ', '%20')
-		self.link = self.base + self.search + self.params
-		req = requests.get(self.link)
+		link = "https://fr.wikipedia.org/w/api.php?action=query&pageids={page_id}&prop=extracts&rvprop=content&format=json".format(page_id = self.idPage)
+		req = requests.get(link)
 		res = req.json()
-
+	
 		# if no article is found :
-		if 'missing' in res['query']['pages'][0].keys():
+		if 'error' in res.keys():
 			return -1, -1
 		
 		else:
-			foo = res['query']['pages'][0]['revisions'][0]['content']
-			self.text = foo.split('\n')
-			self.linkWikipedia = "https://fr.wikipedia.org/wiki/" + self.search.replace(' ', '_')
-			return self.text, self.linkWikipedia
+			self.textBot = res['query']['pages'][str(self.idPage)]['extract']			
+			self.linkWikipedia = "https://fr.wikipedia.org/wiki/" + \
+				res['query']['pages'][str(self.idPage)]['title'].replace(' ', '_')
+			return self.textBot, self.linkWikipedia
 		
 
-if __name__ == "__main__":
-	question = input('Entrez votre question : ')
+def main():
+	#question = input('Entrez votre question : ')
+	question = "Salut GrandPy, tu connais l'addresse d'Openclassrooms ?"
 	
+	#Parse the question
 	parser = Parser()	
 	search = parser.parseQuestion(question)
 	gmap = GoogleMapAPI()
-	count = 1	
+	count = 1		
 
-	if gmap.requestGMAP(search, count):
+	if gmap.requestGMAP(search, count) == 1:
 		count += 1
 		search = parser.secondParsing()
-		gmap.requestGMAP(search, count)
+		if gmap.requestGMAP(search, count) == 1:
+			print("Désolé mon petit, je n'ai rien trouvé, es-tu sûr de l'orthographe ?")
+			return
 
-	if gmap.requestGMAP(search, count):
-		print("Désolé mon petit je n'ai rien trouvé, es-tû sûr de l'orthographe ?")
-
-	searchWiki = parser.parseAdress(gmap.location)
+	#Find an article about it on Wikipedia
 	wiki = MediaWikiAPI()
-	text, link = wiki.requestMediaWiki(searchWiki)
-	with open('toto.txt', 'w') as f:
-		f.write(text[24])
-
-	if text == -1 and link == -1:
-		print("Désolé, je ne me souviens de rien à propos de cette endroit.")
+	if wiki.getWikiPage(gmap.lat, gmap.lng) == 1:
+		print("Désolé mon petit, je ne me souviens de rien concernant cet endroit.")
 	else:
-		textBot = parser.parseWiki(text)
+		textBot, link = wiki.requestMediaWiki()
+		textBot = parser.parseWiki(wiki.textBot)		
+		print("lat : ", gmap.lat)
+		print("lng : ", gmap.lng)
+		print("\n",textBot)
+		print(link)	
 	
-	print("lat : ", gmap.lat)
-	print("lng : ", gmap.lng)
-	print("loc : ", gmap.location)
-	print("\n", textBot)
-	print('\n', link)
+
+if __name__ == "__main__":
+	main()
