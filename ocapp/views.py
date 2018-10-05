@@ -1,9 +1,8 @@
 #!/bin/env python3
 
-from flask import Flask, request, render_template, jsonify 
-from jinja2 import Template
+from flask import Flask, jsonify, render_template, request  
 
-from ocapp.controllers import *
+from ocapp import main
 
 
 app = Flask(__name__)
@@ -14,43 +13,27 @@ app.config.from_object('config')
 #API_KEY = app.config['API_KEY']
 
 
-@app.route('/', methods=['get', 'post'])
-@app.route('/index/', methods=['get', 'post'])
+@app.route('/')
+@app.route('/index/')
 def index():
-	if request.method == 'GET':
-		return render_template('index.html')
-
-	elif request.method == 'POST':
-		question = request.form['question']
-		parser = Parser()	
-		search = parser.parseQuestion(question)
-		gmap = GoogleMapAPI()
-		gmap.API_KEY = app.config['API_KEY']
-		count = 1	
-	
-		if gmap.requestGMAP(search, count):
-			count += 1
-			search = parser.secondParsing()
-	
-			if gmap.requestGMAP(search, count):
-				#return jsonify({'error': "Désolé mon petit je n'ai rien trouvé, es-tû sûr de l'orthographe ?"})
-				return jsonify({'lat': -1, 'lng': -1, 'textGrandPy': "Désolé mon petit je n'ai rien trouvé, es-tû sûr de l'orthographe ?", 'linkWiki': link})
-		
-		searchWiki = parser.parseAdress(gmap.location)
-		wiki = MediaWikiAPI()
-		text, link = wiki.requestMediaWiki(searchWiki)
-	
-		if text == -1 and link == -1:
-			#return jsonify({'error': "Désolé, je ne me souviens de rien à propos de cette endroit."})
-			return jsonify({'lat': gmap.lat, 'lng': gmap.lng, 'textGrandPy': "Désolé, je ne me souviens de rien à propos de cette endroit.", 'linkWiki': link})
-		else:
-			textGrandPy = parser.parseWiki(text)
-		
-		with open('toto.txt', 'w') as f:
-			f.write(textGrandPy)
-		return jsonify({'lat': gmap.lat, 'lng': gmap.lng, 'textGrandPy': textGrandPy, 'linkWiki': link})
+    if request.method == 'GET':
+        return render_template('index.html')
 
 
+@app.route('/results/', methods=['POST'])
+def results():
+    question = request.form['question']
+    content = main(question)
+
+    if isinstance(content, tuple):
+        lat = content[0]
+        lng = content[1]
+        textBot = content[2]
+        linkWiki = content[3]
+        return jsonify({'map': render_template('gmap.html', textBot=textBot, linkWiki=linkWiki, \
+            latitude=lat, longitude=lng, API_KEY=PI_KEY)})
+    else:
+        return jsonify({'error': render_template('error.html', error_message=content)})
 
 if __name__ == "__main__":
-	app.run()
+    app.run()
