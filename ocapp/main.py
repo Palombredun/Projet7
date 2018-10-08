@@ -21,7 +21,7 @@ def main(question):
 
         #Find an article about it on Wikipedia
         wiki = MediaWikiAPI()
-        if wiki.get_wiki_page(gmap.lat, gmap.lng) != 1:
+        if wiki.get_wiki_page(gmap.lat, gmap.lng) == 0:
             textBot, link = wiki.request_media_wiki()
             textBot = parser.parse_wiki(wiki.textBot)
             # if everything happened fine :

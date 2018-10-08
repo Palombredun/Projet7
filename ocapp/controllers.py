@@ -126,10 +126,13 @@ class MediaWikiAPI:
         """
         link = "https://fr.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord={lat}%7C{lng}&format=json".format(lat=latitude, lng=longitude)
         req = requests.get(link)
-        res = req.json()
-        if 'error' not in res.keys():
-            self.idPage = res['query']['geosearch'][0]['pageid']
-            return 0
+        if req.status_code == 200:
+            res = req.json()
+            if 'error' not in res.keys():
+                self.idPage = res['query']['geosearch'][0]['pageid']
+                return 0
+            else:
+                return 1
         else:
             return 1
         
@@ -140,16 +143,20 @@ class MediaWikiAPI:
         """
         link = "https://fr.wikipedia.org/w/api.php?action=query&pageids={page_id}&prop=extracts&rvprop=content&format=json".format(page_id=self.idPage)
         req = requests.get(link)
-        res = req.json()
 
-        # if no article is found :
-        if 'error' not in res.keys():
-            self.textBot = res['query']['pages'][str(self.idPage)]['extract']
-            self.linkWikipedia = "https://fr.wikipedia.org/wiki/" + \
-                res['query']['pages'][str(self.idPage)]['title'].replace(' ', '_')
-            return self.textBot, self.linkWikipedia       
+        if req.status_code == 200:
+            res = req.json()
+    
+            # if no article is found :
+            if 'error' not in res.keys():
+                self.textBot = res['query']['pages'][str(self.idPage)]['extract']
+                self.linkWikipedia = "https://fr.wikipedia.org/wiki/" + \
+                    res['query']['pages'][str(self.idPage)]['title'].replace(' ', '_')
+                return 0    
+            else:
+                return 1
         else:
-            return -1, -1
+            return 1
         
 
 def main():
