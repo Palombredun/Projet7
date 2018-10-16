@@ -2,7 +2,7 @@
 
 from flask import Flask, jsonify, render_template, request  
 
-from ocapp import main
+from ocapp import main as script
 
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ def index():
 def results():
     if request.method == 'POST':
         question = request.form['question']
-        content = main(question)
+        content = script.treat_question(question)
     
         if isinstance(content, tuple):
             lat = content[0]
