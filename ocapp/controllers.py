@@ -52,9 +52,9 @@ class Parser:
                 # if the word is not a verb :
                 if isinstance(res, dict):
                     self.parsedQuestion += ' ' + word
-                return 0
+                return True
             else:
-                return 1
+                return False
         return self.parsedQuestion.strip()
 
 
@@ -101,11 +101,11 @@ class GoogleMapAPI:
             if res['status'] == 'OK':
                 self.lat = res['results'][0]['geometry']['location']['lat']
                 self.lng = res['results'][0]['geometry']['location']['lng']
-                return 0
+                return True
             else:
-                return 1
+                return False
         else:
-            return -1
+            return False
 
     
 class MediaWikiAPI:
@@ -130,11 +130,11 @@ class MediaWikiAPI:
             res = req.json()
             if 'error' not in res.keys():
                 self.idPage = res['query']['geosearch'][0]['pageid']
-                return 0
+                return True
             else:
-                return 1
+                return False
         else:
-            return 1
+            return False
         
 
     def request_media_wiki(self):
@@ -152,11 +152,11 @@ class MediaWikiAPI:
                 self.textBot = res['query']['pages'][str(self.idPage)]['extract']
                 self.linkWikipedia = "https://fr.wikipedia.org/wiki/" + \
                     res['query']['pages'][str(self.idPage)]['title'].replace(' ', '_')
-                return 0    
+                return True    
             else:
-                return 1
+                return False
         else:
-            return 1
+            return False
         
 
 def main():
@@ -169,16 +169,16 @@ def main():
     gmap = GoogleMapAPI()
     count = 1
 
-    if gmap.request_gmap(search, count) == 1:
+    if gmap.request_gmap(search, count) == False:
         count += 1
         search = parser.second_parsing()
-        if gmap.request_gmap(search, count) == 1:
+        if gmap.request_gmap(search, count) == False:
             print("Désolé mon petit, je n'ai rien trouvé, es-tu sûr de l'orthographe ?")
             return
 
     #Find an article about it on Wikipedia
     wiki = MediaWikiAPI()
-    if wiki.get_wiki_page(gmap.lat, gmap.lng) == 1:
+    if wiki.get_wiki_page(gmap.lat, gmap.lng) == False:
         print("Désolé mon petit, je ne me souviens de rien concernant cet endroit.")
     else:
         textBot, link = wiki.request_media_wiki()

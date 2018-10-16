@@ -55,7 +55,7 @@ def test_second_parsing(monkeypatch):
     monkeypatch.setattr(requests, 'get', mock_return)
     parser = script.Parser()
     parser.parsed_question = "connais"
-    assert parser.second_parsing() == 0
+    assert parser.second_parsing() == True
 
 def test_second_parsing_fail(monkeypatch):
     def mock_return(request):
@@ -76,7 +76,7 @@ def test_second_parsing_fail(monkeypatch):
     monkeypatch.setattr(requests, 'get', mock_return)
     parser = script.Parser()
     parser.parsed_question = "connais"
-    assert parser.second_parsing() == 1
+    assert parser.second_parsing() == False
 
 ################################################
 ##################### GMAP #####################
@@ -141,7 +141,7 @@ def test_request_gmap(monkeypatch):
     monkeypatch.setattr(requests, 'get', mock_return)
     search = 'Openclassrooms'
     gmap = script.GoogleMapAPI()
-    assert gmap.request_gmap(search) == 0
+    assert gmap.request_gmap(search) == True
     assert gmap.lat == 48.8747578
     assert gmap.lng == 2.3505647
 
@@ -172,7 +172,7 @@ def test_request_gmap_fail(monkeypatch):
     monkeypatch.setattr(requests, 'get', mock_return)
     search = 'Openclassrooms'
     gmap = script.GoogleMapAPI()
-    assert gmap.request_gmap(search) == -1
+    assert gmap.request_gmap(search) == False
 
 def test_request_gmap_fail(monkeypatch):                
     def mock_return(request):
@@ -191,7 +191,7 @@ def test_request_gmap_fail(monkeypatch):
     monkeypatch.setattr(requests, 'get', mock_return)
     search = 'Openclassrooms'
     gmap = script.GoogleMapAPI()
-    assert gmap.request_gmap(search) == 1
+    assert gmap.request_gmap(search) == False
 
 ################################################
 ##################### WIKI #####################
@@ -243,7 +243,7 @@ def test_get_wiki_page(monkeypatch):
     lat = 48.8747578
     lng = 2.350564700000001
     wiki = script.MediaWikiAPI()
-    assert wiki.get_wiki_page(lat, lng) == 0
+    assert wiki.get_wiki_page(lat, lng) == True
 
 def test_get_wiki_page_fail(monkeypatch):                
     def mock_return(request):
@@ -267,7 +267,7 @@ def test_get_wiki_page_fail(monkeypatch):
     lat = 48.8747578
     lng = 2.350564700000001
     wiki = script.MediaWikiAPI()
-    assert wiki.get_wiki_page(lat, lng) == 1
+    assert wiki.get_wiki_page(lat, lng) == False
 
 
 def test_request_media_wiki(monkeypatch):                
@@ -285,7 +285,7 @@ def test_request_media_wiki(monkeypatch):
     monkeypatch.setattr(requests, 'get', mock_return)
     wiki = script.MediaWikiAPI()
     wiki.idPage = 5091748
-    assert wiki.request_media_wiki() == 0
+    assert wiki.request_media_wiki() == True
 
 def test_request_media_wiki_fail(monkeypatch):                
     def mock_return(request):
@@ -302,4 +302,4 @@ def test_request_media_wiki_fail(monkeypatch):
     monkeypatch.setattr(requests, 'get', mock_return)
     wiki = script.MediaWikiAPI()
     wiki.idPage = 5091748
-    assert wiki.request_media_wiki() == 1
+    assert wiki.request_media_wiki() == False

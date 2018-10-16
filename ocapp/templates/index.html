@@ -50,7 +50,7 @@
                 </form>
             </div>          
             <div class="col-lg-2 bouton">
-                <button type="button" class="btn btn-primary btn-block" id="click">Entrée</button>
+                <button type="button" class="btn btn-primary btn-block" formaction="/results/" id="click">Entrée</button>
             </div>
         </div>
         
@@ -81,9 +81,8 @@
 <script>
     $(function (){
         $('#click').on('click', function() {
-            event.preventDefault()
             var question = ('#question');
-            var content = ('#map');
+            var content = ('#gmap');
 
             $('#gmap').hide()
             $('#animation').fadeIn(1500, 'swing').fadeOut(1500, 'swing').fadeIn(1500, 'swing').fadeOut(1500, 'linear');
@@ -94,7 +93,7 @@
                 data: $question.val(),
                 success: function(resp) {
                     content.append(resp.map);
-                    alert('toto')
+                    $('#gmap').show()
                 },
                 error: function() {
                     alert('error getting question');
