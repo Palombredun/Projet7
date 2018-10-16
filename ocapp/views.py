@@ -13,24 +13,11 @@ app.config.from_object('config')
 #API_KEY = app.config['API_KEY']
 
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index/', methods=['GET', 'POST'])
+@app.route('/')
+@app.route('/index/')
 def index():
     if request.method == 'GET':
         return render_template('index.html')
-    if request.method == 'POST':
-        question = request.form['question']
-        content = main(question)
-    
-        if isinstance(content, tuple):
-            lat = content[0]
-            lng = content[1]
-            textBot = content[2]
-            linkWiki = content[3]
-            return jsonify({'map': render_template('gmap.html', textBot=textBot, linkWiki=linkWiki, \
-                latitude=lat, longitude=lng, API_KEY=PI_KEY)})
-        else:
-            return jsonify({'error': render_template('error.html', error_message=content)})
 
 @app.route('/results/', methods=['GET', 'POST'])
 def results():

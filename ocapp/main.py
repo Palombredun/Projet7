@@ -2,36 +2,45 @@
 
 from ocapp.controllers import *
 
-def main(question):
-    #Parse the question
+def treat_question(question):
+    """
+    Function parsing the question asked by the user and making the requests to the APIs.
+    Returns ERROR if an error occured, else it returns the latitude, longitude, text and
+    link wikipedia required for the program to work.
+    """
     parser = Parser()   
     search = parser.parse_question(question)
     gmap = GoogleMapAPI()
     
-    if gmap.request_gmap(search) != -1:
-        if gmap.request_gmap(search) == 1:       
+    if gmap.request_gmap(search) is -1:
+        return "ERROR"
+
+    else:
+        if gmap.request_gmap(search) is False:
+
             search = parser.second_parsing()
             if isinstance(search, str):
-                # no result from gmap
-                if gmap.request_gmap(search) == 1:
-                    return "Désolé mon petit, je n'ai rien trouvé, es-tu sûr de l'orthographe ?"
+                if gmap.request_gmap(search) is False:
+                    return "ERROR"
+
             else:
                 # ultralingua down
-                return "Désolé mon petit, je n'ai rien trouvé, es-tu sûr de l'orthographe ?"
+                return "ERROR"
 
         #Find an article about it on Wikipedia
         wiki = MediaWikiAPI()
-        if wiki.get_wiki_page(gmap.lat, gmap.lng) == 0:
-            textBot, link = wiki.request_media_wiki()
-            textBot = parser.parse_wiki(wiki.textBot)
-            # if everything happened fine :
-            return(lat, lng, textBot, link) 
-        # wiki down
+
+        if wiki.get_wiki_page(gmap.lat, gmap.lng) is False:
+            return "ERROR"
+        
         else:
-            return "Désolé mon petit, je ne me souviens de rien concernant cet endroit." 
-    # gmap down
-    else:
-        return "Désolé, je suis en train de m'endormir, tu pourrais repasser dans quelques temps ?"
+            response = wiki.request_media_wiki()
+            if response is False:
+                return "ERROR"
+            else:
+                textBot = parser.parse_wiki(wiki.textBot)
+                return gmap.lat, gmap.lng, textBot, wiki.linkWikipedia
+
 
 if __name__ == "__main__":
     main()

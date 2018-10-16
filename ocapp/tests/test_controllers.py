@@ -57,26 +57,6 @@ def test_second_parsing(monkeypatch):
     parser.parsed_question = "connais"
     assert parser.second_parsing() == True
 
-def test_second_parsing_fail(monkeypatch):
-    def mock_return(request):
-        class MockResponse():
-            def __init__(self):
-                self.status_code = 400
-                self.text = '''
-                                [{"partofspeech": {
-                                    "partofspeechcategory": "verb"
-                                    }
-                                }]
-                            '''
-            # Faking the requests.Response.json() method
-            def json(self):
-                return json.loads(self.text)
-        return MockResponse()
-
-    monkeypatch.setattr(requests, 'get', mock_return)
-    parser = script.Parser()
-    parser.parsed_question = "connais"
-    assert parser.second_parsing() == False
 
 ################################################
 ##################### GMAP #####################
@@ -172,7 +152,7 @@ def test_request_gmap_fail(monkeypatch):
     monkeypatch.setattr(requests, 'get', mock_return)
     search = 'Openclassrooms'
     gmap = script.GoogleMapAPI()
-    assert gmap.request_gmap(search) == False
+    assert gmap.request_gmap(search) == -1
 
 def test_request_gmap_fail(monkeypatch):                
     def mock_return(request):

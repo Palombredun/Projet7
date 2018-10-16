@@ -47,15 +47,13 @@ class Parser:
         for word in listedQuestion:
             link = url + word
             req = requests.get(link)
-            if req.status_code == 200:
-                res = req.json()
-                # if the word is not a verb :
-                if isinstance(res, dict):
-                    self.parsedQuestion += ' ' + word
-                return True
-            else:
-                return False
-        return self.parsedQuestion.strip()
+            if req.status_code is not 200:
+                self.parsedQuestion += ' ' + word
+        
+        if self.parsedQuestion is '':
+            return False
+        else:
+            return self.parsedQuestion.strip()
 
 
     def parse_wiki(self, rawResponse):
@@ -65,10 +63,12 @@ class Parser:
         in order to not have a too long text to print on the website.
         """
         cleanr = re.compile('<.*?>')
-        cleanText = re.sub(cleanr, '', rawResponse)
-        cleanText = cleanText.strip().split('\n')[0]
-        cleanText = cleanText.split('.')
-        cleanText = '.'.join(cleanText[:3])
+        temp = re.sub(cleanr, '', rawResponse)
+        temp = temp.strip()
+        temp = temp.split('\n')
+        temp = temp[0]
+        temp = temp.split('.')
+        cleanText = '.'.join(temp[:3])
         return cleanText
 
 
@@ -77,7 +77,7 @@ class GoogleMapAPI:
     Class dedicated to the creation of the request to Google Map.
     """
     def __init__(self):
-        self.API_KEY = ""
+        self.API_KEY = "AIzaSyDuT6k-2LrFv3c0dwPCL83bKwtM0fVM0Jg"
         self.link = ''
         self.lat = -1
         self.lng = -1
@@ -94,8 +94,8 @@ class GoogleMapAPI:
             "address={place}&region=fr&key=" + \
             self.API_KEY
         self.link = self.link.format(place=search.replace(' ', '+'))
+
         req = requests.get(self.link)
-        
         if req.status_code == 200:
             res = req.json()
             if res['status'] == 'OK':
@@ -105,7 +105,7 @@ class GoogleMapAPI:
             else:
                 return False
         else:
-            return False
+            return -1
 
     
 class MediaWikiAPI:
@@ -124,7 +124,8 @@ class MediaWikiAPI:
         the id of the wikipedia pages near the coordinates.
         The function extracts the id page of the first page.
         """
-        link = "https://fr.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord={lat}%7C{lng}&format=json".format(lat=latitude, lng=longitude)
+        link = f"https://fr.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord={latitude}%7C{longitude}&format=json"
+        
         req = requests.get(link)
         if req.status_code == 200:
             res = req.json()
@@ -144,49 +145,70 @@ class MediaWikiAPI:
         link = "https://fr.wikipedia.org/w/api.php?action=query&pageids={page_id}&prop=extracts&rvprop=content&format=json".format(page_id=self.idPage)
         req = requests.get(link)
 
-        if req.status_code == 200:
+        if req.status_code is not 200:
+            return False
+
+        else:
             res = req.json()
     
-            # if no article is found :
-            if 'error' not in res.keys():
+            if 'error' in res.keys():
+                return False
+            
+            else:
                 self.textBot = res['query']['pages'][str(self.idPage)]['extract']
                 self.linkWikipedia = "https://fr.wikipedia.org/wiki/" + \
                     res['query']['pages'][str(self.idPage)]['title'].replace(' ', '_')
-                return True    
-            else:
-                return False
-        else:
-            return False
+
+                return True
         
 
 def main():
-    #question = input('Entrez votre question : ')
-    question = "Salut GrandPy, tu connais l'addresse d'Openclassrooms ?"
-    
+    question = "Salut grandpy, tu connais l'adresse d'Openclassrooms ?"
     #Parse the question
-    parser = Parser()
+    parser = Parser()   
     search = parser.parse_question(question)
+
     gmap = GoogleMapAPI()
-    count = 1
-
-    if gmap.request_gmap(search, count) == False:
-        count += 1
-        search = parser.second_parsing()
-        if gmap.request_gmap(search, count) == False:
-            print("Désolé mon petit, je n'ai rien trouvé, es-tu sûr de l'orthographe ?")
-            return
-
-    #Find an article about it on Wikipedia
-    wiki = MediaWikiAPI()
-    if wiki.get_wiki_page(gmap.lat, gmap.lng) == False:
-        print("Désolé mon petit, je ne me souviens de rien concernant cet endroit.")
+    if gmap.request_gmap(search) is  -1:
+        print("Désolé, je suis en train de m'endormir, tu pourrais repasser dans quelques temps ?")
+        return
+    
     else:
-        textBot, link = wiki.request_media_wiki()
-        textBot = parser.parse_wiki(wiki.textBot)
-        print("lat : ", gmap.lat)
-        print("lng : ", gmap.lng)
-        print("\n", textBot)
-        print(link)
+        if gmap.request_gmap(search) is False:
+
+            search = parser.second_parsing()
+            if isinstance(search, str):
+                if gmap.request_gmap(search) is False:
+                    print("Désolé mon petit, je n'ai rien trouvé, es-tu sûr de l'orthographe ?")
+                    return
+            
+            else:
+                # ultralingua down
+                print("Désolé mon petit, je n'ai rien trouvé, es-tu sûr de l'orthographe ?")
+                return
+
+        #Find an article about it on Wikipedia
+        wiki = MediaWikiAPI()
+
+        if wiki.get_wiki_page(gmap.lat, gmap.lng) is False:
+            print("Désolé mon petit, je ne me souviens de rien concernant cet endroit." ) 
+            return
+        
+        else:
+            response = wiki.request_media_wiki()
+            if response is False:
+                print("ERROR")
+            else:
+                textBot = parser.parse_wiki(wiki.textBot)
+
+                # if everything happened fine :
+                print("lat : ", gmap.lat)
+                print("lng : ", gmap.lng)
+                print("\ntext GrandPy Bot :\n", textBot)
+                print("link wiki : ", wiki.linkWikipedia)
+    
+            
+        
 
 
 if __name__ == "__main__":
