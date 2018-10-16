@@ -77,7 +77,7 @@ class GoogleMapAPI:
     Class dedicated to the creation of the request to Google Map.
     """
     def __init__(self):
-        self.API_KEY = "AIzaSyDuT6k-2LrFv3c0dwPCL83bKwtM0fVM0Jg"
+        self.API_KEY = ""
         self.link = ''
         self.lat = -1
         self.lng = -1
