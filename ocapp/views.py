@@ -16,10 +16,10 @@ app.config.from_object('config')
 @app.route('/')
 @app.route('/index/')
 def index():
-    if request.method == 'GET':
-        return render_template('index.html')
+    return render_template('index.html')
 
-@app.route('/results/', methods=['GET', 'POST'])
+
+@app.route('/results/', methods=['POST'])
 def results():
     if request.method == 'POST':
         question = request.form['question']
@@ -30,8 +30,10 @@ def results():
             lng = content[1]
             textBot = content[2]
             linkWiki = content[3]
-            return jsonify({'map': render_template('gmap.html', textBot=textBot, linkWiki=linkWiki, \
-                latitude=lat, longitude=lng, API_KEY=PI_KEY)})
+            with open("toto.txt", "w") as f:
+                f.write("toto")
+            return jsonify({'res': render_template('gmap.html', textBot=textBot, linkWiki=linkWiki, \
+                latitude=lat, longitude=lng, API_KEY=API_KEY)})
         else:
             return jsonify({'error': render_template('error.html', error_message=content)})
 

@@ -37,12 +37,14 @@
     </header>
 
     <div class="container">
+
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="text-center title" style="font-size:6vw;"> <span id="GrandPy">GrandPy</span> Bot</h1>
             </div>
         </div>
         
+        <!--
         <div class="row">
             <div class="col-lg-10 form">
                 <form method="post">
@@ -53,7 +55,20 @@
                 <button type="button" class="btn btn-primary btn-block" formaction="/results/" id="click">Entrée</button>
             </div>
         </div>
-        
+        -->
+
+        <div class="row">
+            <div class="col-lg-12">
+                <form method="post" action="/results/" id="my_form">
+                    <p><input type="text" name="question" class="form-control" placeholder="Posez votre question"/ required=""> </p>
+                    <div class="bouton">
+                        <button type="button" class="btn btn-primary btn-block">Entrée</button>
+                    </div>
+                </form>
+            </div>          
+
+        </div>
+
         <div class="row justify-content-center">
             <div class="col-lg-12" id="text_grandpy" >
             </div>
@@ -62,9 +77,11 @@
             </div>
         </div>
         
-        <div class="row col-lg-12" id="gmap">
-        </div>
+        <div class="row col-lg-12" id="results"></div>
+
     </div> <!-- Fin class container -->
+
+
     <div class="container-fluid">
         <div class="row">
             <footer class="footer">
@@ -79,28 +96,43 @@
     crossorigin="anonymous">
 </script>
 <script>
-    $(function (){
-        $('#click').on('click', function() {
-            var question = ('#question');
-            var content = ('#gmap');
-
-            $('#gmap').hide()
-            $('#animation').fadeIn(1500, 'swing').fadeOut(1500, 'swing').fadeIn(1500, 'swing').fadeOut(1500, 'linear');
-
-            $.ajax({
-                type: 'POST',
-                url: '/results/',
-                data: $question.val(),
-                success: function(resp) {
-                    content.append(resp.map);
-                    $('#gmap').show()
-                },
-                error: function() {
-                    alert('error getting question');
-                }
-            }); // end .ajax()
-        }); // end of $('#click')
-    }); // end of (function ())
+    $("#my_form").submit(function(event){
+    event.preventDefault(); //prevent default action
+    var post_url = $(this).attr("action"); //get form action url
+    var request_method = $(this).attr("method"); //get form GET/POST method
+    var form_data = $(this).serialize(); //Encode form elements for submission
+    
+    $.ajax({
+        url : post_url,
+        type: request_method,
+        data : form_data
+    }).done(function(response){
+        alert("toto")
+        $("results").load("templates/error.html");
+    });
+    });
+    //$(function (){
+    //    $('#click').on('click', function() {
+    //
+    //
+    //        $('#gmap').hide()
+    //        $('#animation').fadeIn(1500, 'swing').fadeOut(1500, 'swing').fadeIn(1500, 'swing').fadeOut(1500, '//linear');
+    //
+    //        $.ajax({
+    //            type: 'POST',
+    //            url: '/results',
+    //            data: ('#question').val(),
+    //            dataType: 'json'
+    //            success: function(result) {
+    //                content.append(result['res']);
+    //                ('#gmap').show()
+    //            },
+    //            error: function() {
+    //                alert('error getting question');
+    //            }
+    //        }); // end .ajax()
+    //    }); // end of $('#click')
+    //}); // end of (function ())
 
 </script>
 
