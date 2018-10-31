@@ -30,12 +30,22 @@ def results():
             lng = content[1]
             textBot = content[2]
             linkWiki = content[3]
-            with open("toto.txt", "w") as f:
-                f.write("toto")
-            return jsonify({'res': render_template('gmap.html', textBot=textBot, linkWiki=linkWiki, \
-                latitude=lat, longitude=lng, API_KEY=API_KEY)})
+            with open("ocapp/templates/map.html", "r") as f:
+                text = f.read()
+            with open("../..temp.html") as g:
+                g.write(text.format(\
+                    textBot=textBot, linkWiki=linkWiki,\
+                    latitude=lat, longitude=lng, API_KEY=API_KEY))
+            #return jsonify({'res': render_template('gmap.html', textBot=textBot, linkWiki=linkWiki, \
+            #    latitude=lat, longitude=lng, API_KEY=API_KEY)})
+            return '0'
         else:
-            return jsonify({'error': render_template('error.html', error_message=content)})
+            with open("ocapp/templates/error.html", "r") as f:
+                text = f.read()
+            with open("ocapp/templates/temp.html", "w") as g:
+                g.write(text.format(error_message=content))
+            #return render_template('error.html', error_message=content)
+            return '0'
 
 if __name__ == "__main__":
     app.run()

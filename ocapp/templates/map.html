@@ -3,13 +3,13 @@
   <body>
     <div id="map" style="width:100%;height:400px;"></div>
     <div id='textBot'>
-      {{ textBot }}
-      <a href={{ linkWiki }} target="blank" title="Link Wikipedia" style="font-size:1.5vw;">[En savoir plus]</a>
+      {textBot}
+      <a href={linkWiki} target="blank" title="Link Wikipedia" style="font-size:1.5vw;">[En savoir plus]</a>
     </div>
 
     <script>
       function initMap() {
-        var myLatLng = {lat: {{ latitude }}, lng: {{ longitude }} };
+        var myLatLng = {lat: {latitude}, lng: {longitude} };
 
         // Create a map object and specify the DOM element
         // for display.
@@ -27,7 +27,7 @@
       }
 
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ API_KEY }}&callback=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key={API_KEY}&callback=initMap"
         async defer></script>
   </body>
 </html>
