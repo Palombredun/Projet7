@@ -1,6 +1,7 @@
 #!/bin/env python3
 
 from ocapp.controllers import *
+import ocapp.config as config
 
 def treat_question(question):
     """
@@ -11,6 +12,7 @@ def treat_question(question):
     parser = Parser()   
     search = parser.parse_question(question)
     gmap = GoogleMapAPI()
+    gmap.API_KEY = config.getKey()
     
     if gmap.request_gmap(search) is -1:
         return "ERROR"
@@ -39,7 +41,7 @@ def treat_question(question):
                 return "ERROR"
             else:
                 textBot = parser.parse_wiki(wiki.textBot)
-                return gmap.lat, gmap.lng, textBot, wiki.linkWikipedia
+                return (gmap.lat, gmap.lng, textBot, wiki.linkWikipedia, gmap.API_KEY)
 
 
 if __name__ == "__main__":
