@@ -22,41 +22,28 @@
 
 <body>
     <header>
-    <div class="container-fluid header">
-        <div class="row">
-            <div class="col-lg-1 col-md-1 col- col-sm-1 col-xs-1">
-                <img src="../static/logo.png" alt="logo" class="responsive">
-            </div>
-            <div class="col-lg-10 col-md-8 col-xs-10 bordure">
-                <h3 style="font-size:2vw;">
-                    Bienvenue chez GrandPy Bot ! <br/>Posez-lui une question sur un lieu et il vous renseignera !
-                </h3>
+        <div class="container-fluid header">
+            <div class="row">
+                <div class="col-lg-1 col-md-1 col- col-sm-1 col-xs-1">
+                    <img src="../static/logo.png" alt="logo" class="responsive">
+                </div>
+                <div class="col-lg-10 col-md-8 col-xs-10 bordure">
+                    <h3 style="font-size:2vw;">
+                        Bienvenue chez GrandPy Bot ! <br/>Posez-lui une question sur un lieu et il vous renseignera     !
+                    </h3>
+                </div>
             </div>
         </div>
-    </div> <!-- Fin class container-fluid -->
     </header>
 
     <div class="container">
-
+        <!-- Name of the website -->
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="text-center title" style="font-size:6vw;"> <span id="GrandPy">GrandPy</span> Bot</h1>
             </div>
         </div>
-        
-        <!--
-        <div class="row">
-            <div class="col-lg-10 form">
-                <form method="post">
-                    <p><input type="text" action="/results/" name="question" id="question" class="form-control" placeholder="Posez votre question"/ required=""> </p>
-                </form>
-            </div>          
-            <div class="col-lg-2 bouton">
-                <button type="button" class="btn btn-primary btn-block" formaction="/results/" id="click">Entrée</button>
-            </div>
-        </div>
-        -->
-
+        <!-- Form -->
         <div class="row">
             <div class="col-lg-12">
                 <form method="post" action="/results/" id="my_form">
@@ -68,27 +55,29 @@
             </div>          
 
         </div>
-
+        <!-- Animation -->
         <div class="row justify-content-center">
             <div class="col-lg-12" id="text_grandpy" >
-            </div>
-            <div class="col-2 col-sm-2 col-md-2 col-lg-2 align-self-center responsive">
-                <img src="../static/logo.png" alt="animation" id="animation">
+                <div class="col-2 col-sm-2 col-md-2 col-lg-2 align-self-center responsive">
+                    <img src="../static/logo.png" alt="animation" id="animation">
+                </div>
             </div>
         </div>
-        
+        <!-- Result of the request -->
         <div class="row col-lg-12" id="results"></div>
 
     </div> <!-- Fin class container -->
 
-
-    <div class="container-fluid">
-        <div class="row">
-            <footer class="footer">
-                <a href="https://github.com/Palombredun/Projet7.git" target="blank" title="Lien GitHub" style="font-size:1.5vw;">GitHub</a>
-            </footer>
+    <!-- Footer -->
+    <footer class="fixed-bottom">
+        <div class="container-fluid">
+            <div class="row">
+                <footer class="footer">
+                    <a href="https://github.com/Palombredun/Projet7.git" target="blank" title="Lien GitHub" style=" font-size:1.5vw;">GitHub</a>
+                </footer>
+            </div>
         </div>
-    </div>
+    </footer>
 
 <script
     src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -107,8 +96,8 @@
         type: request_method,
         data : form_data
     }).done(function(response){
-        //alert("toto")
-        $("#results").load("templates/temp.html");
+        alert("success")
+        $("#results").append(response);
         ("#results").show();
     });
     });
