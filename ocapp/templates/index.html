@@ -1,132 +1,109 @@
 <!DOCTYPE html>
+
 <html>
-
 <head>
-    <meta charset="utf-8" />
-    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8"><!--<meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+    <meta content="width=device-width, initial-scale=1" name="viewport">
 
-    <title>GrandPy Bot</title>    
-    <meta name="description" content="Posez-lui une question sur un lieu et il répondra !">
-    <meta name="author" content="Baptiste Fina">
-    <meta name="Language" content="fr">    
-
-    <!-- CSS : -->
+    <title>GrandPy Bot</title>
+    <meta content="Posez-lui une question sur un lieu et il répondra !" name="description">
+    <meta content="Baptiste Fina" name="author">
+    <meta content="fr" name="Language"><!-- CSS : -->
     <!--
     <link href="../../bootstrap/dist/css/bootstrap.css" rel="stylesheet">
     -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../static/main.css">
+    <link href="../static/main.css" rel="stylesheet">
 </head>
-
 
 <body>
     <header>
         <div class="container-fluid header">
             <div class="row">
-                <div class="col-lg-1 col-md-1 col- col-sm-1 col-xs-1">
-                    <img src="../static/logo.png" alt="logo" class="responsive">
+                <div class="col-lg-1 col-md-1 col- col-sm-1 col-xs-1"><img alt="logo" class="responsive" src="../static/logo.png">
                 </div>
+
+
                 <div class="col-lg-10 col-md-8 col-xs-10 bordure">
-                    <h3 style="font-size:2vw;">
-                        Bienvenue chez GrandPy Bot ! <br/>Posez-lui une question sur un lieu et il vous renseignera     !
-                    </h3>
+                    <h3 style="font-size:2vw;">Bienvenue chez GrandPy Bot !<br>
+                    Posez-lui une question sur un lieu et il vous renseignera !</h3>
                 </div>
             </div>
         </div>
     </header>
 
+
     <div class="container">
         <!-- Name of the website -->
+
+
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="text-center title" style="font-size:6vw;"> <span id="GrandPy">GrandPy</span> Bot</h1>
+                <h1 class="text-center title" style="font-size:6vw;"><span id="GrandPy">GrandPy</span> Bot</h1>
             </div>
         </div>
         <!-- Form -->
+
+
         <div class="row">
             <div class="col-lg-12">
-                <form method="post" action="/results/" id="my_form">
-                    <p><input type="text" name="question" class="form-control" placeholder="Posez votre question"/ required=""> </p>
+                <form action="/results/" id="my_form" method="post" name="my_form">
+                    <p><input class="form-control" name="question" placeholder="Posez votre question" type="text" required>
+                    </p>
+
                     <div class="bouton">
-                        <button type="button" class="btn btn-primary btn-block">Entrée</button>
+                        <button type="submit" class="btn btn-primary btn-block" form="my_form">Entrée</button>
                     </div>
                 </form>
-            </div>          
-
-        </div>
-        <!-- Animation -->
-        <div class="row justify-content-center">
-            <div class="col-lg-12" id="text_grandpy" >
-                <div class="col-2 col-sm-2 col-md-2 col-lg-2 align-self-center responsive">
-                    <img src="../static/logo.png" alt="animation" id="animation">
-                </div>
             </div>
         </div>
+
+        <!-- Animation -->
+        <div id="animation"><img alt="logo" class="responsive mx-auto d-block" src="../static/logo.png">
+        </div>
+
         <!-- Result of the request -->
-        <div class="row col-lg-12" id="results"></div>
-
-    </div> <!-- Fin class container -->
-
+        <div class="row col-lg-12" id="results">
+        </div>
+    </div>
+    <!-- Fin class container -->
     <!-- Footer -->
+
+
     <footer class="fixed-bottom">
         <div class="container-fluid">
             <div class="row">
                 <footer class="footer">
-                    <a href="https://github.com/Palombredun/Projet7.git" target="blank" title="Lien GitHub" style=" font-size:1.5vw;">GitHub</a>
+                    <a href="https://github.com/Palombredun/Projet7.git" style=" font-size:1.5vw;" target="blank" title="Lien GitHub">GitHub</a>
                 </footer>
             </div>
         </div>
     </footer>
 
-<script
-    src="https://code.jquery.com/jquery-3.3.1.min.js"
-    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous">
-</script>
-<script>
-    $("#my_form").submit(function(event){
-    event.preventDefault(); //prevent default action
-    var post_url = $(this).attr("action"); //get form action url
-    var request_method = $(this).attr("method"); //get form GET/POST method
-    var form_data = $(this).serialize(); //Encode form elements for submission
-    
-    $.ajax({
-        url : post_url,
-        type: request_method,
-        data : form_data
-    }).done(function(response){
-        alert("success")
-        $("#results").append(response);
-        ("#results").show();
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js">
+    </script> 
+    <script>
+    $(document).ready(function() {
+        $("#my_form").submit(function(event){
+            event.preventDefault(); //prevent default action
+            $('#animation').fadeIn("slow");
+        
+            var post_url = $(this).attr("action"); //get form action url
+            var request_method = $(this).attr("method"); //get form GET/POST method
+            var form_data = $(this).serialize(); //Encode form elements for submission
+            
+            $.ajax({
+                url : post_url,
+                type: request_method,
+                data : form_data
+            }).done(function(response){
+                $('#animation').fadeOut("slow");
+                $("#results").empty()
+                $("#results").append(response);
+                ("#results").show()
+            });
+        });
     });
-    });
-    //$(function (){
-    //    $('#click').on('click', function() {
-    //
-    //
-    //        $('#gmap').hide()
-    //        $('#animation').fadeIn(1500, 'swing').fadeOut(1500, 'swing').fadeIn(1500, 'swing').fadeOut(1500, '//linear');
-    //
-    //        $.ajax({
-    //            type: 'POST',
-    //            url: '/results',
-    //            data: ('#question').val(),
-    //            dataType: 'json'
-    //            success: function(result) {
-    //                content.append(result['res']);
-    //                ('#gmap').show()
-    //            },
-    //            error: function() {
-    //                alert('error getting question');
-    //            }
-    //        }); // end .ajax()
-    //    }); // end of $('#click')
-    //}); // end of (function ())
-
-</script>
-
+    </script>
 </body>
-
-
 </html>

@@ -1,63 +1,51 @@
-.header
-{
-
-	background-color: #F36A10;
+.header {
+    background-color: #F36A10;
 }
 
-.bordure
-{
-	/*background-color: #F36A10;*/
-
-	text-align: center;
-	font-family: Verdana, Arial;	
-	color: white;
-	font-size: 1.0em;
+.bordure {
+    /*background-color: #F36A10;*/
+    text-align: center;
+    font-family: Verdana, Arial;
+    color: white;
+    font-size: 1.0em;
 }
 
-.title
-{
-	padding-top: 150px;
-	font-size: 5.0em;
-	font-weight: bold;
+.title {
+    padding-top: 150px;
+    font-size: 5.0em;
+    font-weight: bold;
 }
 
-#GrandPy
-{
-	color: #F36A10;
+#GrandPy {
+    color: #F36A10;
 }
 
-.class
-{
-	max-width: 100%;
-	height: auto;
+.class {
+    max-width: 100%;
+    height: auto;
 }
 
-.footer
-{
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	font-size: 1.0em;
-	font-family: Verdana;
-	text-align: center;
-	background-color: #F36A10;
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    font-size: 1.0em;
+    font-family: Verdana;
+    text-align: center;
+    background-color: #F36A10;
 }
 
-a
-{
-	color: white;
-	text-decoration: none;
+a {
+    color: white;
+    text-decoration: none;
 }
 
-
-#animation
-{
-	display: none;
+#animation {
+    display:none;
 }
 
-#text_grandpy
-{
-	display: none;
+#text_grandpy {
+    display: none;
 }
 
 /* Customization of the button */
@@ -69,26 +57,32 @@ a
     letter-spacing: 1px;
     text-transform: uppercase;
 }
- 
-.btn:focus, .btn:active:focus, .btn.active:focus {
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus {
     outline: 0 none;
 }
- 
+
 .btn-primary {
     background: #F36A10;
     color: #ffffff;
 }
- 
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.open>.dropdown-toggle.btn-primary {
     background: #000000;
 }
- 
-.btn-primary:active, .btn-primary.active {
+
+.btn-primary:active,
+.btn-primary.active {
     background: #000000;
     box-shadow: none;
 }
 
-*
-{
-  border-radius: 0 !important;
+* {
+    border-radius: 0 !important;
 }
