@@ -1,7 +1,9 @@
 #!/bin/env python3
+import os
+from boto.s3.connection import S3Connection
 
 from ocapp.controllers import *
-import ocapp.config as config
+#import ocapp.config as config
 
 def treat_question(question):
     """
@@ -12,7 +14,7 @@ def treat_question(question):
     parser = Parser()   
     search = parser.parse_question(question)
     gmap = GoogleMapAPI()
-    gmap.API_KEY = config.getKey()
+    gmap.API_KEY = S3Connection(os.environ['API_KEY'])
     
     if gmap.request_gmap(search) is -1:
         return "ERROR"

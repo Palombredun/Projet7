@@ -1,5 +1,4 @@
 env/
-ocapp/config.py
 **/__pycache__/
 .pytest_cache/
 ocapp/.pytest_cache/
