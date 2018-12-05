@@ -14,7 +14,7 @@ def treat_question(question):
     parser = Parser()   
     search = parser.parse_question(question)
     gmap = GoogleMapAPI()
-    gmap.API_KEY = S3Connection(os.environ['API_KEY'])
+    gmap.API_KEY = str(os.environ['API_KEY'])
     
     if gmap.request_gmap(search) is -1:
         return "ERROR"
