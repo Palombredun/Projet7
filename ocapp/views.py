@@ -32,20 +32,11 @@ def results():
             linkWiki = result[3]
             API_KEY = result[4]
             script_src = "https://maps.googleapis.com/maps/api/js?key=" + API_KEY +"&callback=initMap"
-            #with open("ocapp/templates/map.html", "r") as f:
-            #    text = f.read()
-            #with open("../..temp.html", "w") as g:
-            #    g.write(text.format(\
-            #        textBot=textBot, linkWiki=linkWiki,\
-            #        latitude=lat, longitude=lng, API_KEY=API_KEY)\
-            #    )
+
             return render_template('map.html', textBot=textBot, linkWiki=linkWiki, \
                 latitude=lat, longitude=lng, script_src=script_src)
         else:
-            #with open("ocapp/templates/error.html", "r") as f:
-            #    text = f.read()
-            #with open("ocapp/templates/temp.html", "w") as g:
-            #    g.write(text.format(error_message=result))
+
             message = "Désolé mon petit, je n'ai rien trouvé. Es-tu sûr de l'orthographe ?"
             return render_template('error.html', error_message=message)
 

@@ -1,6 +1,5 @@
 #!/bin/env python3
 import os
-from boto.s3.connection import S3Connection
 
 from ocapp.controllers import *
 #import ocapp.config as config
